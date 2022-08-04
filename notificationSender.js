@@ -8,7 +8,7 @@ module.exports.notifications = async (event, context) => {
   const time = new Date();
   console.log(`Your notification function "${context.functionName}" ran at ${time}`);
   console.log(event.Records[0].dynamodb)
-  const status = event.Records[0].dynamodb.NewImage.status["S"]
+  const status = event.Records[0].dynamodb.NewImage.status["N"]
   const shipmentID = event.Records[0].dynamodb.NewImage.shippingCode["S"]
   const message = "Shipment "+shipmentID+" new status is: "+status;
   var params = {
