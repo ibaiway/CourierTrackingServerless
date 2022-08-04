@@ -68,17 +68,26 @@ module.exports.run = async (event, context) => {
         break;
     }
 
-    const params = {
-      TableName: "shipmentsTable",
-      Item: {
-        shippingCode,
-        status: shipmentStatus,
-      },
-    };
+    
 
     try {
+      const currentStatus = await dynamoDbClient.get({TableName: "shipmentsTable",
+    Key: {shippingCode}, AttributesToGet: ["status"]}).promise()
+    console.log("CURRENT STATUS",currentStatus)
+
+    if (shipmentStatus !== currentStatus.Item.status) {
+      const params = {
+        TableName: "shipmentsTable",
+        Item: {
+          shippingCode,
+          status: shipmentStatus,
+        },
+      };
       await dynamoDbClient.put(params).promise();
       console.log("Write to DB success")
+    } else {
+      console.log("Not written to DB")
+      }
     } catch (error) {
       console.log(error);
     }
