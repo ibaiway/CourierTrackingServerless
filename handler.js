@@ -47,8 +47,26 @@ module.exports.run = async (event, context) => {
 
   try {
     const result = await getRequest(shippingCode);
-    const shipmentStatus = result.shipment[0].events[result.shipment[0].events.length-1].summaryText;
-    console.log('result is: 👉️', shipmentStatus);
+    const phase = result.shipment[0].events[result.shipment[0].events.length-1].phase;
+    console.log('result is: 👉️', phase);
+    let shipmentStatus = 0;
+
+    switch (phase) {
+      case "1":
+        shipmentStatus = 1;
+        break;
+      case "2":
+        shipmentStatus = 2;
+        break;
+      case "3":
+        shipmentStatus = 3;
+        break;
+      case "4":
+        shipmentStatus = 4;
+    
+      default:
+        break;
+    }
 
     const params = {
       TableName: "shipmentsTable",
