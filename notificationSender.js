@@ -2,6 +2,25 @@
 const AWS = require("aws-sdk");
 AWS.config.update({region: "eu-west-1"})
 
+const STATUS_PHASES = {
+  1: {
+    "es": "Pre-registrado",
+    "en": "Pre-registered"
+  },
+  2: {
+    "es": "En transito",
+    "en": "In transit"
+  },
+  3: {
+    "es": "En reparto",
+    "en": "Being delivered"
+  },
+  4: {
+    "es": "Entregado",
+    "en": "Delivered"
+  }
+}
+
 
 module.exports.notifications = async (event, context) => {
 
@@ -10,7 +29,8 @@ module.exports.notifications = async (event, context) => {
   console.log(event.Records[0].dynamodb)
   const status = event.Records[0].dynamodb.NewImage.status["N"]
   const shipmentID = event.Records[0].dynamodb.NewImage.shippingCode["S"]
-  const message = "Shipment "+shipmentID+" new status is: "+status;
+  const statusMessage = STATUS_PHASES[status].en
+  const message = "Shipment "+shipmentID+" new status is: "+statusMessage;
   var params = {
     Message: message,
     TopicArn: 'arn:aws:sns:eu-west-1:547538558190:ShipmentChange'
