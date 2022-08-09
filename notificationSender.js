@@ -22,20 +22,28 @@ const STATUS_PHASES = {
 }
 
 
+
+
 module.exports.notifications = async (event, context) => {
 
   const time = new Date();
   console.log(`Your notification function "${context.functionName}" ran at ${time}`);
+  console.log(event)
   console.log(event.Records[0].dynamodb)
-  const status = event.Records[0].dynamodb.NewImage.status["N"]
+  const oldStatus = event.Records[0].dynamodb.OldImage.status["N"]
+  const newStatus = event.Records[0].dynamodb.NewImage.status["N"]
+  if (oldStatus === newStatus){
+    console.log("Function finished, oldStatus equals newStatus ---> value: ",oldStatus)
+    return
+  }
   const shipmentID = event.Records[0].dynamodb.NewImage.shippingCode["S"]
-  const statusMessage = STATUS_PHASES[status].en
+  const statusMessage = STATUS_PHASES[newStatus].en
   const message = "Shipment "+shipmentID+" new status is: "+statusMessage;
   var params = {
     Message: message,
     TopicArn: 'arn:aws:sns:eu-west-1:547538558190:ShipmentChange'
   };
-  console.log(event.Records[0].dynamodb.NewImage.status["S"])
+  console.log(event.Records[0].dynamodb.NewImage.status["N"])
   console.log("Los parametros"+params)
   
 // Create promise and SNS service object

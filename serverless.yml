@@ -39,6 +39,8 @@ functions:
           type: dynamodb
           arn:
             Fn::GetAtt: [ShipmentsTable, StreamArn]
+          filterPatterns: 
+            - eventName: [MODIFY]
     memorySize: 128
 resources:
   Resources:
@@ -53,5 +55,5 @@ resources:
           - AttributeName: shippingCode
             KeyType: HASH
         StreamSpecification:
-          StreamViewType: NEW_IMAGE
+          StreamViewType: NEW_AND_OLD_IMAGES
         BillingMode: PAY_PER_REQUEST
